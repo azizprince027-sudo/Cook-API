@@ -18,19 +18,23 @@ export class UsersService {
     });
   }
 
-  findAll() {
-    return `This action returns all users`;
-  }
+  // findAll() {
+  //   return `This action returns all users`;
+  // }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
-  }
+  // findOne(id: number) {
+  //   return `This action returns a #${id} user`;
+  // }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
-  }
+  // update(id: number, updateUserDto: UpdateUserDto) {
+  //   return `This action updates a #${id} user`;
+  // }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
+  // remove(id: number) {
+  //   return `This action removes a #${id} user`;
+  // }
+
+// la section 4 et 5 du cahier de charges  precisse que 
+// les routes lié a users sont : [POST /auth/register] et [POST /auth/login]
+
 }
