@@ -1,0 +1,41 @@
+info:
+  name: Update task
+  type: http
+  seq: 5
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/tasks/{{taskId}}"
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Apprendre NestJS et Bruno",
+        "priority": "medium"
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("le statut doit être 200", function() {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("le titre a été modifié", function() {
+          expect(res.getBody().title).to.equal('Apprendre NestJS et Bruno');
+        });
+
+        test("la priorité a été modifiée", function() {
+          expect(res.getBody().priority).to.equal('medium');
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

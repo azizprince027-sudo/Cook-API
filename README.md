@@ -1,118 +1,134 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Cook API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+API REST de gestion de tâches (Task Manager) avec authentification JWT, développée avec NestJS, PostgreSQL et Prisma.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+Chaque utilisateur peut créer un compte, se connecter, et gérer uniquement ses propres tâches (création, consultation, modification, suppression, filtrage).
 
-## Description
+## Prérequis
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- [Node.js](https://nodejs.org/) v24 ou supérieur
+- [Bun](https://bun.sh/) (gestionnaire de paquets et runtime)
+- [PostgreSQL](https://www.postgresql.org/) (v14 ou supérieur recommandé)
+- [pgAdmin](https://www.pgadmin.org/) (optionnel, pour gérer la base visuellement)
+- [Bruno](https://www.usebruno.com/) (pour lancer la collection de tests)
 
-## Project setup
+## Installation des dépendances
 
 ```bash
-$ bun install
+bun install
 ```
 
-## Compile and run the project
+## Configuration de l'environnement (.env)
+
+Créer un fichier `.env` à la racine du projet, avec les variables suivantes :
+
+```env
+DATABASE_URL="postgresql://postgres:VOTRE_MOT_DE_PASSE@localhost:5432/cook_api_db?schema=public"
+JWT_SECRET="votre-secret-jwt-long-et-aleatoire"
+```
+
+- `DATABASE_URL` : chaîne de connexion PostgreSQL (adapter l'utilisateur, le mot de passe et le nom de la base à votre configuration locale)
+- `JWT_SECRET` : clé secrète utilisée pour signer les tokens JWT (choisir une chaîne longue et aléatoire)
+
+⚠️ Le fichier `.env` ne doit jamais être commit sur Git (il est déjà exclu via `.gitignore`).
+
+## Création de la base de données
+
+1. Ouvrir pgAdmin (ou `psql` en ligne de commande)
+2. Créer une base de données nommée `cook_api_db` :
+
+```sql
+CREATE DATABASE cook_api_db;
+```
+
+3. Appliquer les migrations Prisma, qui créent automatiquement les tables `User` et `Task` :
 
 ```bash
-# development
-$ bun run start
-
-# watch mode
-$ bun run start:dev
-
-# production mode
-$ bun run start:prod
+bunx prisma migrate dev
 ```
 
-## Run tests
+4. (Optionnel) Générer le client Prisma manuellement si besoin :
 
 ```bash
-# unit tests
-$ bun run test
-
-# e2e tests
-$ bun run test:e2e
-
-# test coverage
-$ bun run test:cov
+bunx prisma generate
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Lancement de l'API
 
 ```bash
-$ bun install -g @nestjs/mau
-$ mau deploy
+# Mode développement (avec rechargement automatique)
+bun run start:dev
+
+# Mode production
+bun run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+L'API est accessible par défaut sur `http://localhost:3000`.
 
-## Observability
+## Structure du projet
 
-In production applications, observability is essential for understanding how your system behaves, detecting issues early, and maintaining reliable performance.
+src/
+auth/ → inscription, connexion, protection JWT
+users/ → gestion interne des utilisateurs (utilisé par auth)
+tasks/ → CRUD des tâches (protégé par JWT)
+prisma/ → service de connexion à la base de données
+prisma/
+schema.prisma → modèles de données (User, Task) et migrations
 
-[NestJS Observe](https://observe.nestjs.com) automatically instruments your NestJS application, giving you deep visibility into your system with minimal setup:
 
-- **Distributed tracing:** Follow requests across services and understand how they flow through your system.
-- **Waterfall analysis:** Visualize request execution and identify slow operations, bottlenecks, and unexpected delays.
-- **Performance analysis:** Analyze application performance in real time and quickly pinpoint areas that need optimization.
-- **Metrics:** Track key application and infrastructure metrics to understand system health and performance trends.
-- **Logging:** Centralize and correlate logs with traces and other telemetry to make debugging easier.
-- **Error tracking:** Detect errors quickly and investigate their root causes with the surrounding context.
-- **SLA monitoring:** Track service-level objectives and identify when your application is approaching or exceeding defined thresholds.
-- **Alarms and alerts:** Set up alerts for critical errors, performance degradation, SLA violations, and other anomalies so your team can react quickly.
+## Endpoints disponibles
 
-This project is already instrumented. Create a free account at [observe.nestjs.com](https://observe.nestjs.com), add an application, and paste the generated app key and secret into the `ObserveModule.forRoot()` call in `src/app.module.ts`.
+### Authentification
 
-The free plan needs no payment details and covers 300,000 events a month. You can also browse the [live demo](https://www.observe-demo.nestjs.com/dashboard) first - the whole dashboard over a busy service's data, with nothing to install.
+| Méthode | Route | Description | Protégé |
+|---|---|---|---|
+| POST | `/auth/register` | Créer un compte | Non |
+| POST | `/auth/login` | Se connecter (retourne un token JWT) | Non |
+| GET | `/auth/profil` | Récupérer l'utilisateur connecté | Oui |
 
-## Resources
+### Tâches
 
-Check out a few resources that may come in handy when working with NestJS:
+| Méthode | Route | Description | Protégé |
+|---|---|---|---|
+| POST | `/tasks` | Créer une tâche | Oui |
+| GET | `/tasks` | Lister ses tâches (filtres: `?completed=` et `?priority=`) | Oui |
+| GET | `/tasks/:id` | Récupérer une tâche | Oui |
+| PATCH | `/tasks/:id` | Modifier une tâche | Oui |
+| PATCH | `/tasks/:id/complete` | Marquer une tâche comme terminée | Oui |
+| DELETE | `/tasks/:id` | Supprimer une tâche | Oui |
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Auto-instrument your application with [NestJS Observe](https://observe.nestjs.com). Distributed tracing, metrics, and logging made easy. Error tracking and performance monitoring for your NestJS applications.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Les routes protégées nécessitent un header :
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## Lancement des tests avec Bruno
 
-## Stay in touch
+1. Installer [Bruno](https://www.usebruno.com/downloads)
+2. Ouvrir Bruno, cliquer sur **"Open Collection"**
+3. Sélectionner le dossier `bruno/` (ou l'emplacement de la collection "Tasks API") fourni avec ce projet
+4. Sélectionner l'environnement **"Local"** (en haut à droite)
+5. Vérifier que l'API tourne (`bun run start:dev`) avant de lancer les tests
+6. Lancer les requêtes individuellement, ou clic droit sur la collection → **"Run"** pour tout exécuter d'un coup
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+La collection est organisée en 3 dossiers :
+- **Auth** : inscription, connexion, cas d'erreurs (email déjà utilisé, mauvais mot de passe)
+- **Tasks** : CRUD complet des tâches, filtres, cas d'erreurs (sans token, données invalides)
+- **Sécurité** : vérifie qu'un utilisateur ne peut jamais accéder aux tâches d'un autre utilisateur
 
-## License
+## Technologies utilisées
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- [NestJS](https://nestjs.com/) — framework backend
+- [Prisma](https://www.prisma.io/) (v7) — ORM
+- [PostgreSQL](https://www.postgresql.org/) — base de données
+- [Passport](https://www.passportjs.org/) + [JWT](https://jwt.io/) — authentification
+- [bcrypt](https://www.npmjs.com/package/bcrypt) — hashage des mots de passe
+- [class-validator](https://github.com/typestack/class-validator) — validation des données
+- [Bun](https://bun.sh/) — runtime et gestionnaire de paquets
+- [Bruno](https://www.usebruno.com/) — tests API
+
+
+## NB :
+# 3. Sélectionner le dossier `bruno/` (ou l'emplacement de la collection "Tasks API") fourni avec ce projet
+
+# 3. Sélectionner le dossier `Test-API-Bruno/` fourni avec ce projet
+
+#  > Note : la modification d'une tâche utilise `PATCH` plutôt que `PUT`, car PATCH correspond mieux au comportement de modification partielle implémenté.

@@ -1,0 +1,26 @@
+info:
+  name: User B modifie la tâche de User A - doit échouer
+  type: http
+  seq: 4
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/tasks/{{taskId}}"
+  body:
+    type: json
+    data: '{ "title": "Piratage tentative" }'
+  auth:
+    type: bearer
+    token: "{{tokenUserB}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: expect(res.getStatus()).to.equal(404);
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

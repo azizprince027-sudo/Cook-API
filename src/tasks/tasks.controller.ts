@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, Query,  HttpCode  } from '@nestjs/common';
 import { TasksService } from './tasks.service.js';
 import { CreateTaskDto } from './dto/create-task.dto.js';
 import { UpdateTaskDto } from './dto/update-task.dto.js';
@@ -43,8 +43,9 @@ export class TasksController {
 
 // supprimer  tache 
 @Delete(':id')
-remove(@Param('id') id: string, @Request() requete: any) {
-  return this.tasksService.remove(+id, requete.user.userId);
+@HttpCode(204)
+async remove(@Param('id') id: string, @Request() requete: any) {
+   await this.tasksService.remove(+id, requete.user.userId);
 }
   // tache effectuer // completer
 

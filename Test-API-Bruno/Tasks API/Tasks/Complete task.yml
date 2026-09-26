@@ -1,0 +1,30 @@
+info:
+  name: Complete task
+  type: http
+  seq: 6
+
+http:
+  method: PATCH
+  url: "{{baseUrl}}/tasks/{{taskId}}/complete"
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        test("le statut doit être 200", function() {
+          expect(res.getStatus()).to.equal(200);
+        });
+
+        test("completed doit être true", function() {
+          expect(res.getBody().completed).to.equal(true);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

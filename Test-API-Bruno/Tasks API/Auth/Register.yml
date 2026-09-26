@@ -1,0 +1,47 @@
+info:
+  name: Register
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/auth/register"
+  body:
+    type: json
+    data: |-
+      {
+        "name": "Alice",
+        "email": "alice@example.com",
+        "password": "12345678"
+      }
+  auth: inherit
+
+runtime:
+  scripts:
+    - type: tests
+      code: |-
+        // un test est une checklis pour eviter de tout verifier a la main 
+        test("le statut doit être 201", function() {
+          expect(res.getStatus()).to.equal(201);
+        });
+
+        // "Vérifie que le code de statut HTTP de la réponse est bien 201. Si ce n'est pas le cas, affiche une erreur."
+
+        test("la réponse contient un id", function() {
+          expect(res.getBody()).to.have.property('id');
+        });
+
+        //Vérifie que la réponse contient bien un champ appelé id. Si ce champ manque, affiche une erreur.
+
+        test("la réponse contient le bon email", function() {
+          expect(res.getBody().email).to.equal('alice@example.com');
+        });
+
+        // "Vérifie que le champ email de la réponse vaut exactement alice@example.com (et pas autre chose, pas une faute de frappe, pas vide)."
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false

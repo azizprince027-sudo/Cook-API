@@ -1,0 +1,12 @@
+name: Local
+variables:
+  - name: baseUrl
+    value: http://localhost:3000
+  - name: taskId
+    value:
+      type: number
+      data: "5"
+  - name: token
+    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjUsImlhdCI6MTc5MDQ0NzExOSwiZXhwIjoxNzkwNTMzNTE5fQ.ewVUjt1JF9D6bgMolBeEFI2-A1qyJyVSOG3928zTg3A
+  - name: tokenUserB
+    value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjYsImlhdCI6MTc5MDQ0NzkwNywiZXhwIjoxNzkwNTM0MzA3fQ.SfvbJNstcVrPqPxZ3Gs6jwKIh9TQjzsxSL_BAdFVzos

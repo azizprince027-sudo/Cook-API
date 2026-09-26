@@ -1,0 +1,48 @@
+info:
+  name: Create task
+  type: http
+  seq: 1
+
+http:
+  method: POST
+  url: "{{baseUrl}}/tasks"
+  body:
+    type: json
+    data: |-
+      {
+        "title": "Apprendre NestJS",
+        "description": "Terminer le projet",
+        "priority": "high"
+      }
+  auth:
+    type: bearer
+    token: "{{token}}"
+
+runtime:
+  scripts:
+    - type: after-response
+      code: bru.setEnvVar("taskId", res.getBody().id);
+    - type: tests
+      code: |-
+        test("le statut doit être 201", function() {
+          expect(res.getStatus()).to.equal(201);
+        });
+
+        test("la tâche contient un id", function() {
+          expect(res.getBody()).to.have.property('id');
+        });
+
+        test("le titre est correct", function() {
+          expect(res.getBody().title).to.equal('Apprendre NestJS');
+        });
+
+        test("completed doit être false par défaut", function() {
+          expect(res.getBody().completed).to.equal(false);
+        });
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+  forwardAuthorizationHeader: false
