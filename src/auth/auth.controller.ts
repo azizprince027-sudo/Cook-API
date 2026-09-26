@@ -9,16 +9,19 @@ import { JwtAuthGuard } from './jwt-auth.guard.js';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  // inscriptions 
   @Post('register')
   register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
 
+  // connexion 
   @Post('login')
   login(@Body() loginDto: LoginDto){
     return this.authService.login(loginDto);
   }
   
+  // renvoie de l utilisateurs connecter via JwtStrategy.validate()
   @UseGuards(JwtAuthGuard)
   @Get('profil')
   voirMonProfil(@Request() requete: any) {

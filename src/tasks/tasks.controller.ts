@@ -14,7 +14,8 @@ export class TasksController {
   create(@Body() createTaskDto: CreateTaskDto, @Request() requete: any) {
     return this.tasksService.create(createTaskDto, requete.user.userId);
   }
- 
+
+ // renvoyer toutes les taches
   @Get()
   findAll(
     @Request() requete: any,
@@ -28,16 +29,19 @@ export class TasksController {
     );
   }
 
+  // renvoyer  taches  precises
   @Get(':id')
   findOne(@Param('id') id: string, @Request() requete: any) {
     return this.tasksService.findOne(+id, requete.user.userId);
   }
 
+  // modiffier  taches 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto, @Request() requete: any) {
   return this.tasksService.update(+id, updateTaskDto, requete.user.userId);
 }
 
+// supprimer  tache 
 @Delete(':id')
 remove(@Param('id') id: string, @Request() requete: any) {
   return this.tasksService.remove(+id, requete.user.userId);

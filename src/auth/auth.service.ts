@@ -48,7 +48,7 @@ export class AuthService {
 
     // le token  jwt 
 
-    const payload = { sub: utilisateur.id };
+    const payload = { sub: utilisateur.id }; // l'id de l'utilisateur qui se connecte
     const token = await this.jwtService.signAsync(payload);
 
     return { access_token: token };
