@@ -1,0 +1,15 @@
+# conception de l  immages use : nodes la vesrion qu on utilise
+FROM node:25.7.0-alpine  
+# le repertoires de travailles
+WORKDIR /src
+# copy le packages js on ey lock json
+COPY package*.json ./
+#  commandes pour installerr les dependences du package
+RUN bun install 
+# 
+COPY . .
+#
+EXPOSE 3000
+#
+CMD [ "bun run start:dev" ]
+
