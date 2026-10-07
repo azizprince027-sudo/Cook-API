@@ -1,15 +1,48 @@
 # conception de l  immages use : nodes la vesrion qu on utilise
-FROM node:25.7.0-alpine  
-# le repertoires de travailles
-WORKDIR /src
-# copy le packages js on ey lock json
+FROM node:22-alpine  
+# Installation de Bun dans l'image pour utiliser bun install
+RUN npm install -g bun
+# le repertoires de travailles du conteneurs
+WORKDIR /app
+# copy le packages js on ey lock json /  On copie d'abord les fichiers de dépendances (cache Docker)
 COPY package*.json ./
-#  commandes pour installerr les dependences du package
-RUN bun install 
-# 
+# Installation des dépendances avec les versions exactes du lockfile
+RUN bun install --frozen-lockfile
+#  tout coper dans ce dossiers :On copie ensuite tout le code du projet
 COPY . .
-#
+# Génération du client Prisma
+RUN bunx prisma generate
+# le poort  ou le server sera lancer  
 EXPOSE 3000
-#
-CMD [ "bun run start:dev" ]
+# lancer le server 
+CMD [ "bun","run","start:prod" ]
 
+# 1. Image de départ :  avec Node 22
+FROM node:22-alpine
+
+# 2. Installer Bun dans l'image
+RUN npm install -g bun
+
+# 3. Dossier de travail dans le conteneur
+WORKDIR /app
+
+# 4. Copie  uniquement des fichiers de dépendances
+COPY package.json bun.lock ./
+
+# 5. Installer les dépendances exactement comme dans bun.lock
+RUN bun install --frozen-lockfile
+
+# 6. Copier tout le reste du projet
+COPY . .
+
+# 7. Générer le client Prisma (avec fichie de config)
+RUN bunx prisma generate --config prisma7.config.ts
+
+# 8. Compiler le TypeScript vers dist/
+RUN bun run build
+
+# 9. le port de l'API
+EXPOSE 3000
+
+# 10. Lancement de l'API compilée au démarrage du conteneur
+CMD ["bun", "run", "start:prod"]
