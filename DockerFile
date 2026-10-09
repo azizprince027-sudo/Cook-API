@@ -1,23 +1,4 @@
-# conception de l  immages use : nodes la vesrion qu on utilise
-FROM node:22-alpine  
-# Installation de Bun dans l'image pour utiliser bun install
-RUN npm install -g bun
-# le repertoires de travailles du conteneurs
-WORKDIR /app
-# copy le packages js on ey lock json /  On copie d'abord les fichiers de dépendances (cache Docker)
-COPY package*.json ./
-# Installation des dépendances avec les versions exactes du lockfile
-RUN bun install --frozen-lockfile
-#  tout coper dans ce dossiers :On copie ensuite tout le code du projet
-COPY . .
-# Génération du client Prisma
-RUN bunx prisma generate
-# le poort  ou le server sera lancer  
-EXPOSE 3000
-# lancer le server 
-CMD [ "bun","run","start:prod" ]
-
-# 1. Image de départ :  avec Node 22
+# 1. Image de départ :  avec Node 22 //Alpine est un Linux très léger
 FROM node:22-alpine
 
 # 2. Installer Bun dans l'image
@@ -38,7 +19,7 @@ COPY . .
 # 7. Générer le client Prisma (avec fichie de config)
 RUN bunx prisma generate --config prisma7.config.ts
 
-# 8. Compiler le TypeScript vers dist/
+# 8. Compiler le TypeScript vers dist/ | lance nest build et produit dist/main.js
 RUN bun run build
 
 # 9. le port de l'API

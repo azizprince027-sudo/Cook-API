@@ -1,0 +1,26 @@
+# Liste des conteneurs gérés par Compose
+services:
+  # Nom du service (Compose en déduit le nom du conteneur)
+  api-cook:
+    # Construit l'image avec le Dockerfile du dossier courant
+    build: .
+    # Port de ton PC : port de l'API dans le conteneur (voir main.ts)
+    ports:
+      - "3000:3000"
+    # Variables d'environnement (DATABASE_URL, JWT_SECRET)
+    env_file:
+      - .env
+
+#docker compose config --quiet || sert a relit le compose.yaml et te dit s'il est correct, sans rien lancer
+#docker compose up --build
+#quand on modifie le codes 
+
+#1. Il lit compose.yaml        → il voit un service : api-cook
+#2. build: .                   → il construit l'image avec ton Dockerfile
+                                #(ou réutilise celle qui existe déjà)
+#3. Il crée un réseau privé    → cook-api_default
+#4. Il crée le conteneur       → cook-api-api-cook-1
+#5. ports: "3000:3000"         → il relie ton PC au port 3000 du conteneur
+#6. env_file: .env             → il donne DATABASE_URL et JWT_SECRET au conteneur
+#7. Il démarre le conteneur    → ton API NestJS tourne
+#8. Il affiche les logs        → tu vois ce que fait l'API dans ton terminal
